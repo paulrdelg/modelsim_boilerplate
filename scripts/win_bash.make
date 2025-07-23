@@ -1,10 +1,13 @@
 
-.PHONY: all clean create_lib compile run
+.PHONY: all info clean create_lib compile run
 
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
+gitroot_dir := $(shell git rev-parse --show-toplevel)
 test1 := $(dir $(mkfile_path))
 test2 = $(patsubst %/,%,$(test1))
 cur_dir := $(dir $(test2))
+MODELSIM_VERSION_SHORT := $(shell vsim -version | sed -n 's/^.*ModelSim[^0-9]*\([0-9.]*[a-z]*\).*$$/\1/p')
+
 
 fp_transcript = $(cur_dir)transcript
 fp_modelsimini = $(cur_dir)modelsim.ini
@@ -24,7 +27,7 @@ define CLEAN_DIR
 	@rm -rf $(1)
 endef
 
-all: clean create_lib compile run
+all: clean info create_lib compile run
 
 
 ifeq ($(wildcard $(fp_modelsimini)),$(fp_modelsimini))
@@ -35,6 +38,11 @@ print:
 	$(info "doesn't exists")
 	$(info $(fp_modelsimini))
 endif
+
+info:
+	@echo "git root directory: $(gitroot_dir)"
+	@echo "current directory:  $(cur_dir)"
+	@echo "Modelsim Version:   $(MODELSIM_VERSION_SHORT)"
 
 clean:
 ifeq ($(wildcard $(fp_transcript)),$(fp_transcript))
