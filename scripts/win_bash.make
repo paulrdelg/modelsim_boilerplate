@@ -14,6 +14,7 @@ fp_modelsimini = $(cur_dir)modelsim.ini
 fp_proj_ini = $(cur_dir)cfg/modelsim.ini
 fp_dutlib = $(cur_dir)lib/dut_lib
 fp_tblib = $(cur_dir)lib/tb_lib
+fp_wave = $(cur_dir)waves
 
 slash_to_backslash = $(subst /,\\,$(1))
 
@@ -59,18 +60,20 @@ ifeq ($(wildcard $(fp_tblib)),$(fp_tblib))
 endif
 
 lib:
-	vlib -dirpath lib $(fp_dutlib)
-	vlib -dirpath lib $(fp_tblib)
-	vmap -modelsimini $(fp_proj_ini) dut_lib $(fp_dutlib)
-	vmap -modelsimini $(fp_proj_ini) tb_lib $(fp_tblib)
+	@vlib -dirpath lib $(fp_dutlib)
+	@vlib -dirpath lib $(fp_tblib)
+	@vmap -modelsimini $(fp_proj_ini) dut_lib $(fp_dutlib)
+	@vmap -modelsimini $(fp_proj_ini) tb_lib $(fp_tblib)
 
 compile:
-	@vlog -sv -work dut_lib -modelsimini $(fp_proj_ini) source/and_gate.sv
-	@vcom -2008 -work dut_lib -modelsimini $(fp_proj_ini) source/synchronizer.vhd
-	@vlog -sv -work tb_lib -modelsimini $(fp_proj_ini) source/rst_gen.sv
-	@vlog -sv -work tb_lib -modelsimini $(fp_proj_ini) source/clk_gen.sv
-	@vlog -sv -work tb_lib -modelsimini $(fp_proj_ini) source/tb.sv
+	@vlog -sv -work dut_lib -quiet -modelsimini $(fp_proj_ini) source/and_gate.sv
+	@vcom -2008 -work dut_lib -quiet -modelsimini $(fp_proj_ini) source/synchronizer.vhd
+	@vlog -sv -work tb_lib -quiet -modelsimini $(fp_proj_ini) source/rst_gen.sv
+	@vlog -sv -work tb_lib -quiet -modelsimini $(fp_proj_ini) source/clk_gen.sv
+	@vlog -sv -work tb_lib -quiet -modelsimini $(fp_proj_ini) source/tb.sv
 
 run:
-	echo "test3"
-	vsim -modelsimini $(fp_proj_ini)
+	@vsim -c -modelsimini $(fp_proj_ini) -wlf $(fp_wave)/test1.wlf -do "./scripts/run.tcl"
+
+load:
+	@vsim -modelsimini $(fp_proj_ini) -view $(fp_wave)/test1.wlf

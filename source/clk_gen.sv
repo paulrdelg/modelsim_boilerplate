@@ -16,7 +16,6 @@ module clk_gen(output logic clk);
         forever begin
              #(period/2);
              clk = ~clk;
-             $display("[%0t] clk toggled to %b", $time, clk);
         end
     end
 endmodule
