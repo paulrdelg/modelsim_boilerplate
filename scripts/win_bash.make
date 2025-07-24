@@ -76,4 +76,4 @@ run:
 	@vsim -c -modelsimini $(fp_proj_ini) -wlf $(fp_wave)/test1.wlf -do "./scripts/run.tcl"
 
 load:
-	@vsim -modelsimini $(fp_proj_ini) -view $(fp_wave)/test1.wlf
+	@vsim -modelsimini $(fp_proj_ini) -l ./log/test1.log -view $(fp_wave)/test1.wlf
