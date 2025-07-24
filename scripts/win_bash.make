@@ -1,5 +1,5 @@
 
-.PHONY: all info clean create_lib compile run
+.PHONY: all info clean lib compile run
 
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 gitroot_dir := $(shell git rev-parse --show-toplevel)
@@ -58,16 +58,19 @@ ifeq ($(wildcard $(fp_tblib)),$(fp_tblib))
 	$(call CLEAN_DIR,$(fp_tblib))
 endif
 
-create_lib:
+lib:
 	vlib -dirpath lib $(fp_dutlib)
 	vlib -dirpath lib $(fp_tblib)
 	vmap -modelsimini $(fp_proj_ini) dut_lib $(fp_dutlib)
 	vmap -modelsimini $(fp_proj_ini) tb_lib $(fp_tblib)
 
 compile:
-	@vlog -sv -modelsimini $(fp_proj_ini) source/and_gate.sv
-	@vlog -sv -modelsimini $(fp_proj_ini) source/tb.sv
+	@vlog -sv -work dut_lib -modelsimini $(fp_proj_ini) source/and_gate.sv
+	@vcom -2008 -work dut_lib -modelsimini $(fp_proj_ini) source/synchronizer.vhd
+	@vlog -sv -work tb_lib -modelsimini $(fp_proj_ini) source/rst_gen.sv
+	@vlog -sv -work tb_lib -modelsimini $(fp_proj_ini) source/clk_gen.sv
+	@vlog -sv -work tb_lib -modelsimini $(fp_proj_ini) source/tb.sv
 
 run:
 	echo "test3"
-	vsim
+	vsim -modelsimini $(fp_proj_ini)
