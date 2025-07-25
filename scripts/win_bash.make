@@ -28,7 +28,7 @@ define CLEAN_DIR
 	@rm -rf $(1)
 endef
 
-all: clean info create_lib compile run
+all: clean info lib compile compile run
 
 
 ifeq ($(wildcard $(fp_modelsimini)),$(fp_modelsimini))
@@ -66,11 +66,14 @@ lib:
 	@vmap -modelsimini $(fp_proj_ini) tb_lib $(fp_tblib)
 
 compile:
-	@vlog -sv -work dut_lib -quiet -modelsimini $(fp_proj_ini) source/and_gate.sv
-	@vcom -2008 -work dut_lib -quiet -modelsimini $(fp_proj_ini) source/synchronizer.vhd
-	@vlog -sv -work tb_lib -quiet -modelsimini $(fp_proj_ini) source/rst_gen.sv
-	@vlog -sv -work tb_lib -quiet -modelsimini $(fp_proj_ini) source/clk_gen.sv
-	@vlog -sv -work tb_lib -quiet -modelsimini $(fp_proj_ini) source/tb.sv
+	# dut
+	@vcom -2008 -work dut_lib -quiet -modelsimini $(fp_proj_ini) source/dut/synchronizer.vhd
+	@#
+	# tb
+	@vlog -sv -work tb_lib -quiet -modelsimini $(fp_proj_ini) source/tb/rst_gen.sv
+	@vlog -sv -work tb_lib -quiet -modelsimini $(fp_proj_ini) source/tb/clk_gen.sv
+	@vlog -sv -work tb_lib -quiet -modelsimini $(fp_proj_ini) source/tb/i2c_driver.sv
+	@vlog -sv -work tb_lib -quiet -modelsimini $(fp_proj_ini) source/tb/tb.sv
 
 run:
 	@vsim -c -modelsimini $(fp_proj_ini) -wlf $(fp_wave)/test1.wlf -do "./scripts/run.tcl"

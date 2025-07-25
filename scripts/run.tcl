@@ -10,10 +10,12 @@ add wave sim:/tb/clk
 #log -r sim:/tb/*;
 log sim:/tb/rst
 log sim:/tb/clk
+log sim:/tb/sda
+log sim:/tb/scl
 
 # Run simulation for 100 ns
 puts "runing sim..."
-run 100 ns;
+run 1 us;
 
 # save waveform
 puts "saving wave file..."

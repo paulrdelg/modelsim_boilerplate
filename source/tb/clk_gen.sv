@@ -1,5 +1,8 @@
+// clock generator
 
 module clk_gen(output logic clk);
+    timeunit 1ns;
+    timeprecision 1ps;
 
     int   period = 100; // variable delay in nanoseconds
 
